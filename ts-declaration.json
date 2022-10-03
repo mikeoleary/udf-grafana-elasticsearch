@@ -1,0 +1,37 @@
+{
+    "class": "Telemetry",
+    "My_System": {
+        "class": "Telemetry_System",
+        "systemPoller": {
+            "interval":0,
+            "actions": [{
+                "includeData": {},
+                "locations": {
+                    "system": true
+                }
+            }]
+        }
+    },
+    "My_Listener": {
+        "class": "Telemetry_Listener",
+        "port": 6514,
+        "trace": true
+    },
+    "My_ELK_Consumer": {
+      "class": "Telemetry_Consumer",
+      "enable": true,
+      "trace": true,
+      "type": "Generic_HTTP",
+      "host": "10.1.20.20",
+      "protocol": "http",
+      "port": 8080,
+      "path": "/",
+      "method": "POST",
+      "headers": [
+           {
+             "name": "content-type",
+             "value": "application/json"
+           }
+       ]
+   }
+}
