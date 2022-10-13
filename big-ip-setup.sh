@@ -103,7 +103,7 @@ tmsh create ltm profile analytics telemetry-http-analytics { collect-geo enabled
 #tmsh create ltm profile tcp-analytics telemetry-tcp-analytics { collect-city enabled collect-continent enabled collect-country enabled collect-nexthop enabled collect-post-code enabled collect-region enabled collect-remote-host-ip enabled collect-remote-host-subnet enabled collected-by-server-side enabled }
 
 #modify the AVR logging configuration to point to the existing Log Publisher to get global AVR stats sento offbox
-#tmsh modify analytics global-settings { external-logging-publisher /Common/telemetry_publisher offbox-protocol hsl use-offbox enabled  }
+tmsh modify analytics global-settings { external-logging-publisher /Common/telemetry_publisher offbox-protocol hsl use-offbox enabled  }
 
 ######################################################################
 ## NOW SET UP VIRTUAL SERVERS FOR DEMO APPS                        ###

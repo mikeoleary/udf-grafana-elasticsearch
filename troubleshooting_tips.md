@@ -18,25 +18,4 @@
 ```/var/log/kibana/kibana.log```  
 ```/var/lib/docker/containers``` - _in my experience this directory is filled up quickly if you run the demo containers and a script to continuously send web requests to them._
 
-## Histogram stuff
-```PUT f5-2022.09.29```
-````json
-{
-  "mappings" : {
-    "properties" : {
-      "LatencyHistogram" : {
-        "type" : "text"
-      }
-    }
-  }
-}
-````
-```PUT f5-2022.09.29/_doc/5ku1ioMBp9nh3Nm6phk_```
-````json
-{
-  "LatencyHistogram" : {
-      "values" : [0,2,4,7,12,22,40,74,136,252,465,858,1585,2929,5412,10001,300000], 
-      "counts" : [72855,25358,14866,7288,9766,2460,169,0,0,0,0,0,0,0,0,0,0] 
-   }
-}
 ````

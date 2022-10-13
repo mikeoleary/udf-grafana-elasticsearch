@@ -1,109 +1,103 @@
 ## Configure ElasticSearch
 
-### Create f5 metrics conversion pipeline
+
+### Create ingest pipeline
 ```
-PUT _ingest/pipeline/f5-metrics-pipeline
+PUT _ingest/pipeline/f5-avr-pipeline
 {
-  "description": "My optional pipeline description",
+  "description": "ingest pipeline for adding timestamp field to AVR data",
   "processors": [
-      {
-        "convert": {
-          "field": "MaxCpu",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "AvgMemory",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "counters_pkts_in",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "counters_pkts_out",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "rename": {
-          "field": "system.hostname",
-          "target_field": "hostname",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "transactions",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "server_concurrent_conns",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "client_concurrent_conns",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "latency",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "RTTMin",
-          "type": "double",
-          "ignore_missing": true
-        }
-      },
-      {
-        "convert": {
-          "field": "RTTMax",
-          "type": "double",
-          "ignore_missing": true
-        }
+    {
+      "date": {
+        "field": "data.EOCTimestamp",
+        "formats": [
+          "UNIX"
+        ],
+        "ignore_failure": true
       }
-    ]
+    }
+  ]
 }
 ```
-### Creates a component template for index settings
+
+### Creates an index template
 ```
-PUT /_component_template/f5-logs-settings?pretty
+PUT _index_template/f5-avr-index-template
 {
   "template": {
     "settings": {
-      "index.default_pipeline": "f5-metrics-pipeline",
-      "index.lifecycle.name": "logs"
+      "index": {
+        "default_pipeline": "f5-avr-pipeline"
+      }
+    },
+    "mappings": {
+      "_routing": {
+        "required": false
+      },
+      "numeric_detection": true,
+      "_source": {
+        "excludes": [],
+        "includes": [],
+        "enabled": true
+      },
+      "dynamic": true,
+      "dynamic_templates": [],
+      "date_detection": false,
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "data.EOCTimestamp": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "data.errdefs_msgno": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "data.SlotId": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "data.POOLPort": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "data.ResponseCode": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
     }
-  }
-}
-```
-### Creates an index template matching `f5-*`
-```
-PUT /_index_template/f5-logs-template?pretty
-{
-  "index_patterns": ["f5-*"],
-  "priority": 500,
-  "composed_of": ["f5-logs-settings"]
+  },
+  "index_patterns": [
+    "f5avr*"
+  ],
+  "composed_of": []
 }
 ```

@@ -17,21 +17,22 @@
         "port": 6514,
         "trace": true
     },
-    "My_ELK_Consumer": {
-      "class": "Telemetry_Consumer",
-      "enable": true,
-      "trace": true,
-      "type": "Generic_HTTP",
-      "host": "10.1.20.20",
-      "protocol": "http",
-      "port": 8080,
-      "path": "/",
-      "method": "POST",
-      "headers": [
-           {
-             "name": "content-type",
-             "value": "application/json"
-           }
-       ]
-   }
+    "My_ES_Consumer": {
+        "class": "Telemetry_Consumer",
+        "type": "ElasticSearch",
+        "trace": true,
+        "host": "10.1.20.20",
+        "index": "f5telemetry",
+        "username": "elastic",
+        "passphrase": {
+            "class": "Secret",
+            "protected": "plainText",
+            "cipherText": "F5demonet!"
+        },
+        "port": 9200,
+        "protocol": "https",
+        "useSSL": true,
+        "allowSelfSignedCert": true,
+        "apiVersion": "7.17.6"
+    }
 }
